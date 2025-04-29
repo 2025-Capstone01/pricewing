@@ -6,8 +6,9 @@ const useNavigationHandler = () => {
     const goHome = () => navigate('/');
     const goLogin = () => navigate('/Login');
     const goMyPage = () => navigate('/My');
+    const goSignUpPage = () => navigate('/SignUp');
 
-    return { goHome, goLogin, goMyPage };
+    return { goHome, goLogin, goMyPage, goSignUpPage };
 };
 
 export default useNavigationHandler;
