@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/../cap_pricewing.iml" filepath="$PROJECT_DIR$/../cap_pricewing.iml" />
+      <module fileurl="file://$PROJECT_DIR$/pricewing_m.iml" filepath="$PROJECT_DIR$/pricewing_m.iml" />
     </modules>
   </component>
 </project>
