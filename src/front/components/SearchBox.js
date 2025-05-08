@@ -11,7 +11,7 @@ const SearchBox = ({ onSearch, likeUrl }) => {
             setLink(likeUrl); // 입력창에 전달받은 링크 설정
             onSearch(likeUrl); // 전달받은 링크로 자동 검색 실행
         }
-    }, [likeUrl]);
+    }, [likeUrl, onSearch]);
 
     const handleSubmit = (e) => {
         e.preventDefault();
