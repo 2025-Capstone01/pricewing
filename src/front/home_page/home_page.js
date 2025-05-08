@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import Header from '../components/Header';
 import SearchBox from '../components/SearchBox';
 import ProductCard from '../components/ProductCard';
+import { DuseLocation } from 'react-router-dom';
 
 const Home_page = () => {
+    const location = useLocation();
     const [productData, setProductData] = useState(null);
 
     const handleSearch = async (link) => {
@@ -25,7 +28,8 @@ const Home_page = () => {
         <>
             <Header/>
             <div className="home-container">
-                <SearchBox onSearch={handleSearch} />
+                <SearchBox onSearch={handleSearch} likeUrl={location.state?.keyword}/>
+
                 {productData && (
                     <>
                         <ProductCard data={productData} />
