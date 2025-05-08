@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import Header from '../components/Header';
-import SearchBox from './components/SearchBox';
-import ProductCard from './components/ProductCard';
+import SearchBox from './homeComponents/SearchBox';
+import Home_ProductCard from './homeComponents/home_ProductCard';
 
 const Home_page = () => {
     const location = useLocation();
@@ -32,7 +32,7 @@ const Home_page = () => {
 
                 {productData && (
                     <>
-                        <ProductCard data={productData} />
+                        <Home_ProductCard data={productData} />
                     </>
                 )}
             </div>
