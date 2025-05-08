@@ -1,7 +1,7 @@
 import React from 'react';
 import PriceChart from './PriceChart';
 
-const ProductCard = ({ data }) => {
+const Home_ProductCard = ({ data }) => {
     return (
         <div className="product-card">
             <img src={data.image_url} alt={data.product_title} width={200} />
@@ -14,4 +14,4 @@ const ProductCard = ({ data }) => {
     );
 };
 
-export default ProductCard;
+export default Home_ProductCard;
