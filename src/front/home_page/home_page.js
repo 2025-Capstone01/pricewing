@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Header from '../components/Header';
-import SearchBox from '../components/SearchBox';
-import ProductCard from '../components/ProductCard';
+import SearchBox from './components/SearchBox';
+import ProductCard from './components/ProductCard';
 
 const Home_page = () => {
     const [productData, setProductData] = useState(null);
