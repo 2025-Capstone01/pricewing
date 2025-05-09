@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import {Routes, Route} from "react-router-dom";
 import './App.css';
 import Home from "./front/home_page/home_page";
@@ -21,3 +22,31 @@ function App() {
     );
 }
 export default App;
+=======
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Navbar from './components/Navbar';
+import AppTheme from './shared-theme/AppTheme';
+import Home from './pages/Home';
+import SignIn from './pages/SignIn';
+import SignUp from './pages/SignUp';
+
+function App() {
+  return (
+      <div className="App">
+      <Navbar />
+      <AppTheme>
+      <Router>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/sign-in" element={<SignIn />} />
+          <Route path="/sign-up" element={<SignUp />} />
+        </Routes>
+      </Router>
+      </AppTheme>
+      </div>
+  );
+}
+
+export default App;
+>>>>>>> 4f9c277796341e61d5583a2e1013c50e27746a5d

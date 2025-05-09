@@ -2,7 +2,11 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+<<<<<<< HEAD
       <module fileurl="file://$PROJECT_DIR$/pricewing.iml" filepath="$PROJECT_DIR$/pricewing.iml" />
+=======
+      <module fileurl="file://$PROJECT_DIR$/pricetracker_login.iml" filepath="$PROJECT_DIR$/pricetracker_login.iml" />
+>>>>>>> 4f9c277796341e61d5583a2e1013c50e27746a5d
     </modules>
   </component>
 </project>

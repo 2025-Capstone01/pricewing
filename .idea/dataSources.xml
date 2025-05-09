@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
+<<<<<<< HEAD
     <data-source source="LOCAL" name="price_tracker@localhost" uuid="97189e76-faaf-4f5e-9893-b54d04aed45c">
+=======
+    <data-source source="LOCAL" name="price_tracker@localhost" uuid="6623882f-b84e-4219-9ca9-95134a703b44">
+>>>>>>> 4f9c277796341e61d5583a2e1013c50e27746a5d
       <driver-ref>mysql.8</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>com.mysql.cj.jdbc.Driver</jdbc-driver>
@@ -9,7 +13,10 @@
       <jdbc-additional-properties>
         <property name="com.intellij.clouds.kubernetes.db.host.port" />
         <property name="com.intellij.clouds.kubernetes.db.enabled" value="false" />
+<<<<<<< HEAD
         <property name="com.intellij.clouds.kubernetes.db.resource.type" value="Deployment" />
+=======
+>>>>>>> 4f9c277796341e61d5583a2e1013c50e27746a5d
         <property name="com.intellij.clouds.kubernetes.db.container.port" />
       </jdbc-additional-properties>
       <working-dir>$ProjectFileDir$</working-dir>
