@@ -1,0 +1,110 @@
+import time
+import mysql.connector
+from selenium import webdriver
+from selenium.common.exceptions import NoSuchElementException, TimeoutException, WebDriverException
+from datetime import datetime
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.common.by import By
+
+
+
+#Setup MySQL connection
+def get_db_connection():
+    try:
+        return mysql.connector.connect(
+            host="_END_POINT_RDS",
+            user="username",
+            password="_________",
+            database="name_database"
+        )
+    except mysql.connector.Error as e:
+        print(f"Database connection error:  {e}")
+        return None
+
+# Setup Selenium WebDriver (headless Chrome)
+def get_driver():
+    PATH = ".........../chromedriver"
+    service = Service(PATH)
+    options = webdriver.ChromeOptions()
+    options.add_argument("--headless")
+
+    try:
+        return webdriver.Chrome(service=service, options=options)
+    except WebDriverException as e:
+        print(f"[WebDriver ERROR] {e}")
+        return None
+
+# Extract price from product page
+def extract_price(driver, url):
+    try:
+        driver.get(url)
+        time.sleep(2)  # wait for page to load (adjust if needed)
+
+        price_element = driver.find_element(By.CSS_SELECTOR, "span.text-title_18px_semi.sc-1hw5bl8-7.dGKJZk").text
+        price_text = price_element.replace("원", "").replace(",", "")
+        price = int(price_text)
+        return price
+    except (NoSuchElementException, TimeoutException, ValueError) as e:
+        print(f"[EXTRACT ERROR] Failed to get price from {url}: {e}")
+        return None
+
+# Main logic
+def check_prices():
+    conn = get_db_connection()
+    if not conn:
+        return
+
+    cursor = conn.cursor(dictionary=True)
+    driver = get_driver()
+    if not driver:
+        conn.close()
+        return
+
+    try:
+        cursor.execute("SELECT product_id, product_url, original_price FROM products")
+        products = cursor.fetchall()
+
+        for product in products:
+            print(f"Checking product ID {product['product_id']}...")
+            current_price = extract_price(driver, product['product_url'])
+
+            if current_price is None:
+                continue
+
+            check_sql = """
+                SELECT 1
+                FROM price_history
+                WHERE product_id = %s AND price = %s
+                LIMIT 1
+            """
+
+            cursor.execute(check_sql, (product['product_id'], current_price))
+            already_exists = cursor.fetchone()
+
+            if current_price < product['original_price']:
+                if already_exists:
+                    print(f"Price already recorded for product ID {product['product_id']}: {current_price}")
+                else:
+                    print(f"Price dropped for product ID {product['product_id']}: {product['original_price']} → {current_price}")
+                    try:
+                        insert_sql = """
+                            INSERT INTO price_history (product_id, checked_at, price)
+                            VALUES (%s, %s, %s)
+                        """
+                        cursor.execute(insert_sql, (product['product_id'], datetime.now(), current_price))
+                        conn.commit()
+
+                    except mysql.connector.Error as e:
+                        print(f"[DB INSERT ERROR] {e}")
+            #else:
+            #print(f"No price drop for product ID {product['product_id']}.")
+
+    except mysql.connector.Error as e:
+        print(f"[DB QUERY ERROR] {e}")
+    finally:
+        driver.quit()
+        cursor.close()
+        conn.close()
+
+if __name__ == "__main__":
+    check_prices()
