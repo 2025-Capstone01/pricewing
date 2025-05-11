@@ -1,0 +1,190 @@
+from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+import mysql.connector
+from selenium.common.exceptions import TimeoutException
+import time
+
+
+
+def main():
+    driver = None
+    try:
+        # Initialize WebDriver
+        PATH = "_______/chromedriver"
+        service = Service(PATH)
+        options = webdriver.ChromeOptions()
+        options.add_argument("--headless")
+        driver = webdriver.Chrome(service=service, options=options)
+        print("✅ WebDriver initialized.")
+
+        # Optional: Connect to database
+        mydb, mycursor = connect_to_db()
+
+        # Open 아우터 category의 link
+        main_url = 'https://www.musinsa.com/category/002?gf=A'
+        print(f"🌐 Opening URL: {main_url}")
+        driver.get(main_url)
+
+        WebDriverWait(driver, 15).until(EC.presence_of_element_located((By.CLASS_NAME, "sc-jPkiSJ")))
+
+        print("🔄 Scrolling down to load all products...")
+        product_links = scroll_down(driver)
+        print(f"✅ Total unique product links: {len(product_links)}")
+
+        product_data = []
+
+        for index, product_url in enumerate(product_links[:40]):
+            print(f"\n🔎 Processing product {index + 1}: {product_url}")
+            result = get_product_details(driver, product_url)
+            if result:
+                product_id, product_title, original_price, category_id, image_url  = result
+                print(f"📌 Product ID: {product_id}")
+                print(f"📌 Title: {product_title}")
+                print(f"📌 Price: {original_price}")
+                print(f"📌 Category ID: {category_id}")
+                print(f"📌 Image: {image_url}")
+                product_data.append((product_id, product_title, original_price, image_url, product_url, category_id))
+            else:
+                print("⚠ Failed to get product details.")
+
+        insert_product_data(mycursor, mydb, product_data)
+
+        driver.quit()
+        print("🧹 Browser closed.")
+
+    except Exception as e:
+        print(f"❌ Fatal error occurred: {e}")
+        if driver:
+            driver.quit()
+
+def connect_to_db():
+    try:
+        print("🔌 Connecting to the database...")
+        mydb = mysql.connector.connect(
+            host="__END__POINT___RDS",
+            user="username",
+            password="_____",
+            database="db_name"
+        )
+        mycursor = mydb.cursor()
+        print("✅ Database connection successful.")
+        return mydb, mycursor
+    except mysql.connector.Error as e:
+        print(f"❌ Database connection error: {e}")
+        raise
+
+def scroll_down(wd, timeout = 6):
+    product_links = []
+
+    #later delete
+    start_time=time.time()
+    #later delete
+
+    last_height = wd.execute_script("return document.body.scrollHeight")
+
+    while True:
+        wd.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+        time.sleep(3)
+        product_links += get_product_links(wd)
+
+        new_height = wd.execute_script("return document.body.scrollHeight")
+        if new_height == last_height:
+            print("⏹ No more content to load. Stopping scroll.")
+            break
+        last_height = new_height
+
+        #delete later
+        if time.time() - start_time > timeout:
+            print(f"Timeout! {timeout} seconds. Stop scrolling.")
+            break
+        #delete later
+
+    print("✅ Finished scrolling.")
+    return list(set(product_links))
+
+def get_product_links(wd):
+    print("🔍 Extracting product links...")
+    product_links = []
+
+    products = wd.find_elements(By.CLASS_NAME, "sc-jPkiSJ")
+    print(f"📦 Found {len(products)} product elements.")
+
+    for index, product in enumerate(products):
+        try:
+            anchor = product.find_element(By.TAG_NAME, "a")
+            link = anchor.get_attribute("href")
+            if link:
+                product_links.append(link)
+                print(f"🔗 {index + 1}. {link}")
+        except Exception as e:
+            print(f"❌ Error extracting link for product {index + 1}: {e}")
+            continue
+    return product_links
+
+def get_product_details(wd, product_url):
+    try:
+        wd.set_page_load_timeout(30)
+        wd.get(product_url)
+        time.sleep(3)
+
+        product_id = product_url.split('/')[-1]
+
+        product_title = wd.find_element(By.CSS_SELECTOR, "span.text-title_18px_med.sc-1omefes-1.bcSsDk").text
+        original_price = wd.find_element(By.CSS_SELECTOR, "span.text-title_18px_semi.sc-1hw5bl8-7.dGKJZk").text
+        category_name = wd.find_element(By.CLASS_NAME, "sc-1prswe3-2").text
+
+        category_mapping = {
+            '신발': 1,
+            '상의': 2,
+            '아우터': 3,
+            '바지' : 4,
+            '원피스/스커트': 5,
+            '가방': 6
+        }
+
+        category_id = category_mapping.get(category_name, None)
+
+        try:
+            images = wd.find_elements(By.TAG_NAME, "img")  # Find all images with tag img
+            for img in images:
+                img_url = img.get_attribute("src")
+                if "image.msscdn.net/thumbnails" in img_url and f"{product_id}" in img_url:
+                    image_url = img_url
+
+        except TimeoutException:
+            print(f"⚠ Timeout while fetching image for {product_url}. Skipping image.")
+            return None
+
+        except Exception as e:
+            print(f"❌ Error while extracting image for {product_url}: {e}")
+            return None
+
+        return product_id, product_title, original_price, category_id, image_url
+
+    except Exception as e:
+        print(f"❌ Failed to extract product details: {e}")
+        return None
+
+def insert_product_data(mycursor, mydb, product_data):
+    try:
+        print(f"Inserting {len(product_data)} products into database")
+        sql = "INSERT IGNORE INTO products(product_id, product_title, original_price, image_url, product_url, category_id) VALUES (%s, %s, %s, %s, %s, %s)"
+
+        for product in product_data:
+            product_id, product_title, original_price, image_url, product_url, category_id = product
+            if "원" in original_price:
+                price = original_price.replace("원", "").replace(",", "")
+                original_price = int(price)
+            val = (product_id, product_title, original_price, image_url, product_url, category_id)
+            mycursor.execute(sql, val)
+
+        mydb.commit()
+        print(f"{len(product_data)} records inserted.")
+
+    except Exception as e:
+        print(f"Error duting database insertion: {e}")
+if __name__ == "__main__":
+    main()
