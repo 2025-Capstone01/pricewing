@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import Header from '../components/Header';
 import SearchBox from './homeComponents/SearchBox';
@@ -7,6 +7,10 @@ import Home_ProductCard from './homeComponents/home_ProductCard';
 const Home_page = () => {
     const location = useLocation();
     const [productData, setProductData] = useState(null);
+
+    useEffect(() => {
+        setProductData(null);
+    }, [location.key]);
 
     const handleSearch = async (link) => {
         console.log("검색 시작:", link);
@@ -28,7 +32,7 @@ const Home_page = () => {
             <Header/>
             <div className="home-container">
                 {/* 마이페이지에서 전달된 URL(keyword)을 검색창으로 전달*/}
-                <SearchBox onSearch={handleSearch} likeUrl={location.state?.keyword}/>
+                <SearchBox onSearch={handleSearch} likeUrl={location.state?.keyword} key={location.key}/>
 
                 {productData && (
                     <>
