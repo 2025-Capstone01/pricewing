@@ -14,3 +14,63 @@ header {
     display: flex;
     gap: 0.5rem;
 }
+
+.noti-wrapper {
+    position: relative;
+}
+
+.noti-button {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+
+}
+
+/* ✅ 팝업처럼 헤더 밖으로 띄우는 스타일 */
+.noti-panel {
+    position: fixed; /* 헤더에 안 붙고 화면에 고정됨 */
+    top: 60px;       /* 헤더 아래 60px 위치 (조절 가능) */
+    right: 20px;     /* 화면 오른쪽에서 20px 떨어짐 */
+    width: 250px;
+    background-color: white;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 15px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    z-index: 1000; /* 다른 요소보다 위에 떠 있도록 */
+}
+
+/*로고*/
+.logo {
+    height: 40px; /* 적당한 크기로 조정 */
+    width: auto;
+    margin-right: 10px;
+}
+
+.header-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    max-width: 1200px;
+}
+
+.header-left {
+    flex: 1;
+    display: flex;
+    align-items: center;
+}
+
+.header-center {
+    flex: 2;
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.header-right {
+    flex: 1;
+    display: flex;
+    justify-content: flex-end;
+}
