@@ -3,7 +3,7 @@ const router = express.Router();
 const pool = require('../db');
 
 // 사용자 등록 API
-router.post('/users', async (req, res) => {
+router.post('/', async (req, res) => {
     const { email, password } = req.body;
 
     try {

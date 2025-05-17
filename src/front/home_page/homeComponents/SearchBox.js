@@ -10,6 +10,8 @@ const SearchBox = ({ onSearch, likeUrl }) => {
         if (likeUrl) {
             setLink(likeUrl); // 입력창에 전달받은 링크 설정
             onSearch(likeUrl); // 전달받은 링크로 자동 검색 실행
+        } else {
+            setLink((prev) => (prev.trim() === '' ? '' : prev));             // 링크 없을 때는 검색창 비우기
         }
     }, [likeUrl, onSearch]);
 

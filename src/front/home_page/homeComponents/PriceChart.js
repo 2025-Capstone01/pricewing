@@ -1,27 +1,40 @@
 import React from 'react';
 import {
-    LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer
+    LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine
 } from 'recharts';
 
-const PriceChart = ({ data }) => {
-    if (!data || data.length === 0) return <p>가격 이력이 없습니다.</p>;
+const PriceChart = ({ data, originalPrice }) => {
+    if (!originalPrice) return <p>가격 정보가 없습니다.</p>;
 
-    // 날짜 포맷을 위한 전처리
-    const chartData = data.map(item => ({
-        ...item,
-        date: new Date(item.checked_at).toLocaleDateString(),
-        price: Number(item.price)
-    }));
+
+    // chartData 그대로 전달 (서버에서 연장된 today 데이터 포함)
+    const chartData = [
+        {
+            date: '정가 기준',
+            price: Number(originalPrice),
+        },
+        ...data.map((item) => ({
+            date: item.checked_at.slice(0, 10),
+            price: Number(item.price),
+        })),
+    ];
 
     return (
-        <div style={{ width: "100%", height: 300 }}>
+        <div style={{ width: "100%", height: 300, marginTop: 16 }}>
             <ResponsiveContainer>
                 <LineChart data={chartData}>
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis dataKey="date" />
                     <YAxis domain={['auto', 'auto']} />
                     <Tooltip />
-                    <Line type="monotone" dataKey="price" stroke="#8884d8" strokeWidth={2} />
+                    <Line type="monotone" dataKey="price" stroke="#8884d8" strokeWidth={2} dot={{ r: 3 }} />
+                    {/* 정가 기준선 */}
+                    <ReferenceLine
+                        y={originalPrice}
+                        label={{ value: "정가", position: "right", fill: "red", fontSize: 12 }}
+                        stroke="red"
+                        strokeDasharray="4 4"
+                    />
                 </LineChart>
             </ResponsiveContainer>
         </div>
