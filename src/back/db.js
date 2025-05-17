@@ -3,7 +3,7 @@ const mysql = require("mysql2/promise");
 // RDS 연결 정보 입력
 const pool = mysql.createPool({
     host: "mydb.c2tu80kqge3i.us-east-1.rds.amazonaws.com",  // RDS 엔드포인트
-    user: "jisu",             // 사용자 이름
+    user: "sadong",             // 사용자 이름
     password: "union2025_*",  // 비밀번호
     database: "musinsa",      // 사용할 DB 이름
     port: 3306,
