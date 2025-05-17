@@ -91,7 +91,20 @@ export default function SignIn() {
         const password = data.get('password');
 
         try {
+            // Firebase 로그인
             await loginWithEmail(email, password);
+
+            // MySQL에서 user_id 조회
+            const res = await fetch(`http://localhost:5050/api/users/id?email=${email}`);
+            const result = await res.json();
+
+            if (!result.user_id) {
+                alert('user_id 조회 실패');
+                return;
+            }
+
+            // user_id를 localStorage에 저장
+            localStorage.setItem('user_id', result.user_id);
             alert('로그인 성공!');
             navigate('/');
         } catch (err) {
@@ -101,7 +114,33 @@ export default function SignIn() {
 
     const handleGoogleLogin = async () => {
         try {
-            await loginWithGoogle();
+            // Firebase 로그인 (구글 팝업)
+            const user = await loginWithGoogle();
+
+            // MySQL에 사용자 정보 저장 (이미 있으면 무시됨)
+            const res = await fetch("http://localhost:5050/api/users", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email: user.email, password: "" }) // 구글은 비밀번호 없음
+            });
+
+            const result = await res.json();
+
+            // user_id 저장
+            if (result.user_id) {
+                localStorage.setItem("user_id", result.user_id);
+            } else {
+                // 이미 등록된 사용자라면 user_id만 별도로 조회
+                const idRes = await fetch(`http://localhost:5050/api/users/id?email=${user.email}`);
+                const idResult = await idRes.json();
+
+                if (idResult.user_id) {
+                    localStorage.setItem("user_id", idResult.user_id);
+                } else {
+                    alert("user_id 조회 실패");
+                    return;
+                }
+            }
             alert('구글 로그인 성공!');
             navigate('/');
         } catch (err) {
