@@ -4,7 +4,8 @@ const app = express();
 
 // 라우터 불러오기
 const searchRouter = require("./routes/search");
-
+const likesRouter = require('./routes/likes');
+const userRouter = require('./routes/user');
 
 // 미들웨어 설정
 app.use(cors());                 // CORS 허용 (프론트엔드 요청 받을 수 있게)
@@ -12,7 +13,8 @@ app.use(express.json());        // JSON 요청 파싱
 
 // 검색 API 라우터 연결 (/api/search → search.js 처리)
 app.use("/api/search", searchRouter);
-
+app.use('/api/likes', likesRouter);
+app.use('/api/user', userRouter);
 
 // 서버 실행
 app.listen(5050, () => {
