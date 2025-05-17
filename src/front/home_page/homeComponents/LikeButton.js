@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 const LikeButton = ({ userId, productId }) => {
     const [liked, setLiked] = useState(false);
 
+    // 처음 렌더링 시 좋아요 여부 확인
     useEffect(() => {
         const fetchLikeStatus = async () => {
             if (!userId || !productId) return;
@@ -19,6 +20,7 @@ const LikeButton = ({ userId, productId }) => {
         fetchLikeStatus();
     }, [userId, productId]);
 
+    // 좋아요 버튼 클릭 시 요청 처리
     const handleLike = async () => {
         if (!userId) {
             alert("로그인이 필요합니다.");
@@ -36,7 +38,7 @@ const LikeButton = ({ userId, productId }) => {
             });
 
             if (res.ok) {
-                setLiked(!liked);
+                setLiked(!liked); // 요청 성공 시 liked 상태를 반전시켜 버튼 텍스트를 변경
             } else {
                 alert("좋아요 처리 중 오류가 발생했습니다.");
             }
@@ -45,6 +47,7 @@ const LikeButton = ({ userId, productId }) => {
         }
     };
 
+    // 렌더링된 버튼
     return (
         <button onClick={handleLike}>
             {liked ? '좋아요 취소' : '좋아요'}
