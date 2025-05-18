@@ -11,8 +11,8 @@ const Header = () => {
     //알림창 열림 여부, 상태 설정 함수
     const [notiOpen, setNotiOpen] = React.useState(false);
 
-    const handleLogout = () => {
-        logout();
+    const handleLogout = async () => {
+        await logout();
         setLoggedIn(false);
         goHome();
     };

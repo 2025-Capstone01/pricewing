@@ -85,4 +85,5 @@ export const loginWithGoogle = async () => {
 export const logout = async () => {
     await signOut(auth);
     localStorage.removeItem('user');
+    localStorage.removeItem('user_id');
 };
