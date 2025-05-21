@@ -118,7 +118,7 @@ export default function SignIn() {
             const user = await loginWithGoogle();
 
             // MySQL에 사용자 정보 저장 (이미 있으면 무시됨)
-            const res = await fetch("http://localhost:5050/api/users", {
+            const res = await fetch("http://localhost:5050/api/users/register", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ email: user.email, password: "" }) // 구글은 비밀번호 없음

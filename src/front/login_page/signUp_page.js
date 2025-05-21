@@ -72,8 +72,8 @@ export default function SignUp() {
         const password = data.get('password');
 
         try {
-            await registerWithEmail(email, password);
-            alert('회원가입이 완료되었습니다!');
+            const result = await registerWithEmail(email, password);
+            alert('✅ 회원가입이 완료되었습니다! ID: ' + result.user_id);
             navigate('/');
         } catch (err) {
             alert('회원가입 실패: ' + err.message);

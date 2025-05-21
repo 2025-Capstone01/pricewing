@@ -1,6 +1,5 @@
 // Firebase방식으로 로그인, 회원가입하고 MySQL에 저장하기
 import {
-    createUserWithEmailAndPassword,
     signInWithEmailAndPassword,
     //signInWithRedirect,
     signInWithPopup,
@@ -8,36 +7,32 @@ import {
 } from 'firebase/auth';
 import { auth, provider } from './firebase';
 
-// 회원가입 (이메일로)
+// 회원가입 Firebase + MySQL(이메일로)
 export const registerWithEmail = async (email, password) => {
-    const res = await createUserWithEmailAndPassword(auth, email, password);
-    const user = res.user;
-
-    localStorage.setItem('user', JSON.stringify(user));
-
-    // 백엔드 API 호출하여 사용자 정보 MySQL에 저장
-    const apiRes = await fetch('http://localhost:5050/api/users', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: user.email, password }), // 테스트용, 실제 프로젝트에서는 반드시 암호화!
+    const response = await fetch("http://localhost:5050/api/users/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
     });
 
-    const result = await apiRes.json();
+    const result = await response.json();
+
+    if (!response.ok) {
+        throw new Error(result.message || "서버 오류");
+    }
 
     // user_id 저장
     if (result.user_id) {
         localStorage.setItem('user_id', result.user_id);
     }
 
-    return user;
+    return { email, user_id: result.user_id };
 };
 
 // 로그인 (이메일로)
 export const loginWithEmail = async (email, password) => {
     const res = await signInWithEmailAndPassword(auth, email, password);
     const user = res.user;
-    localStorage.setItem('user', JSON.stringify(user));
-
     localStorage.setItem('user', JSON.stringify(user));
 
     // 로그인 후 user_id 조회
@@ -52,19 +47,27 @@ export const loginWithEmail = async (email, password) => {
 };
 
 // ✅ 구글 로그인 후 MySQL에 사용자 저장
+//구글 로그인 후 Firebase UID와 함께 MySQL에 사용자 저장
 export const loginWithGoogle = async () => {
     const res = await signInWithPopup(auth, provider);
     const user = res.user;
     localStorage.setItem('user', JSON.stringify(user));
 
     // 구글 로그인은 비밀번호를 제공하지 않지만, 이메일은 저장
-    const apiRes = await fetch('http://localhost:5050/api/users', {
+    const apiRes = await fetch('http://localhost:5050/api/users/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: user.email, password: '' }), // 비밀번호는 비워둠
+        body: JSON.stringify({ email: user.email, uid: user.uid, password: '' }), // 비밀번호는 비워둠
     });
 
-    const result = await apiRes.json();
+    //const result = await apiRes.json(); //등록 경로에 오류가 발생하면 예기치 않은 토큰 '<'가 보고된다.그래서 이거 사용x
+    let result;
+
+    try {
+        result = await apiRes.json();
+    } catch (err) {
+        throw new Error("서버로부터 올바른 JSON 응답을 받지 못했습니다. 아마도 경로 또는 서버 오류입니다.");
+    }
 
     // user_id 저장
     if (result.user_id) {

@@ -1,45 +1,59 @@
 const express = require('express');
 const router = express.Router();
 const pool = require('../db');
+const admin = require('../firebaseAdmin');
 
-// 사용자 등록 API
-router.post('/', async (req, res) => {
-    const { email, password } = req.body;
+//  사용자 등록 API (Firebase + MySQL)
+router.post('/register', async (req, res) => {
+    let { email, password, uid } = req.body;
+
+
+    if (!email || !uid) {
+        return res.status(400).json({ message: '이메일과 uid는 필수입니다.' });
+    }
 
     try {
-        const [results] = await pool.query(
-            'SELECT * FROM user WHERE email = ?',
-            [email]
+        //일반 회원가입인 경우 Firebase 유저 생성
+        if (password && password.length >= 6) {
+            const userRecord = await admin.auth().createUser({ email, password });
+            uid = userRecord.uid; // 보안상 실제 Firebase UID 사용
+        }
+
+        //MySQL 중복 확인 (email 또는 uid)
+        const [existingUsers] = await pool.query(
+            'SELECT * FROM user WHERE email = ? OR uid = ?',
+            [email, uid]
         );
 
-        // 이미 존재해도 user_id를 응답해줌 (중복 저장 안하지만, 프론트는 user_id 필요하므로)
-        if (results.length > 0) {
-            console.log('이미 존재하는 사용자:', email);
+        if (existingUsers.length > 0) {
             return res.status(200).json({
                 message: '이미 존재하는 사용자입니다.',
-                user_id: results[0].user_id
+                user_id: existingUsers[0].user_id
             });
         }
 
-        // 신규 사용자 등록
+        // 사용자 정보 저장
         const [insertResult] = await pool.query(
-            'INSERT INTO user (email, user_password) VALUES (?, ?)',
-            [email, password]
+            'INSERT INTO user (email, user_password, uid) VALUES (?, ?, ?)',
+            [email, password, uid]
         );
 
-        console.log('새로운 사용자 저장 완료:', email);
-        res.status(200).json({
-            message: '새로운 사용자가 저장되었습니다.',
+        console.log('✅ 새로운 사용자 등록 완료:', email);
+        res.status(201).json({
+            message: '회원가입 성공',
             user_id: insertResult.insertId
         });
 
     } catch (err) {
-        console.error('저장 실패:', err);
-        res.status(500).send('저장 실패');
+        console.error('❌ 회원가입 실패:', err);
+        res.status(500).json({
+            message: '회원가입 실패',
+            error: err.message
+        });
     }
 });
 
-// 이메일로 user_id 조회 (로그인 후 user_id 확보용)
+// 📌 이메일로 user_id 조회 API (프론트에서 user_id 확보용)
 router.get('/id', async (req, res) => {
     const { email } = req.query;
 
