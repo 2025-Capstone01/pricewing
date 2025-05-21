@@ -1,8 +1,7 @@
 //백엔드 서버가 종료된 상태에서도 Firebase를 통해 신규 사용자가 등록되는 오류를 방지하기 위해, 서버 측에서 회원가입 기능을 구현함
-
+require("dotenv").config(); // .env 불러오기
 const admin = require("firebase-admin");
 const path = require("path");
-require("dotenv").config(); // .env 불러오기
 
 // 환경변수에서 Firebase 인증 키 경로 가져오기
 const serviceAccountPath = process.env.FIREBASE_ADMIN_KEY_PATH;
