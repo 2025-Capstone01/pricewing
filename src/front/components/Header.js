@@ -12,8 +12,8 @@ const Header = () => {
     const [notiOpen, setNotiOpen] = useState(false);
     const [notifications, setNotifications] = useState([]);
 
-    const handleLogout = () => {
-        logout();
+    const handleLogout = async () => {
+        await logout();
         setLoggedIn(false);
         goHome();
     };
