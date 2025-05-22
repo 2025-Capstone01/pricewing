@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-const LikeButton = ({ userId, productId }) => {
+const LikeButton = ({ userId, productId, currentPrice}) => {
     const [liked, setLiked] = useState(false);
 
     // 처음 렌더링 시 좋아요 여부 확인
@@ -30,11 +30,20 @@ const LikeButton = ({ userId, productId }) => {
         const url = "http://localhost:5050/api/likes";
         const method = liked ? "DELETE" : "POST";
 
+        const bodyData = {
+            user_id: userId,
+            product_id: productId
+        };
+
+        if (!liked && currentPrice) {
+            bodyData.liked_price = currentPrice; // POST일 때만 가격 추가
+        }
+
         try {
             const res = await fetch(url, {
                 method,
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ user_id: userId, product_id: productId })
+                body: JSON.stringify(bodyData)
             });
 
             if (res.ok) {

@@ -12,4 +12,16 @@ const pool = mysql.createPool({
     queueLimit: 0
 });
 
+//sadong의 db
+// const pool = mysql.createPool({
+//     host: "localhost",  // RDS 엔드포인트
+//     user: "root",             // 사용자 이름
+//     password: "1234",  // 비밀번호
+//     database: "musinsa",      // 사용할 DB 이름
+//     port: 3306,
+//     waitForConnections: true,
+//     connectionLimit: 10,
+//     queueLimit: 0
+// });
+
 module.exports = pool;
