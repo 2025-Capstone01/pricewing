@@ -7,10 +7,13 @@ import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 
 const Header = () => {
+    const email = localStorage.getItem('email');
     const { goHome, goLogin, goMyPage, goSignUpPage } = useNavigationHandler();
     const [loggedIn, setLoggedIn] = useState(isLoggedIn());
     const [notiOpen, setNotiOpen] = useState(false);
     const [notifications, setNotifications] = useState([]);
+
+
 
     const handleLogout = async () => {
         await logout();
@@ -97,8 +100,22 @@ const Header = () => {
                 </div>
 
                 {/* 오른쪽: 알림 🔔 */}
-                <div className="header-right">
+                <div className="header-right" style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                     {loggedIn && (
+                        <>
+                        {/* ✅ 이메일 환영 메시지 */}
+                    {email && (
+                        <span style={{
+                            fontSize: '0.9rem',
+                            fontWeight: 'normal',
+                            color: '#000',
+                            whiteSpace:'nowrap',
+                            marginRight: '10px',
+                            textDecoration: 'none'   }}>
+                    {email} 님 환영합니다!
+                </span>
+                )}
+
                         <div className="noti-wrapper">
                             <button className="noti-button" onClick={handleToggle}>
                                 🔔
@@ -140,6 +157,7 @@ const Header = () => {
                                 </div>
                             )}
                         </div>
+                        </>
                     )}
                 </div>
             </div>

@@ -3,8 +3,8 @@ import * as React from 'react';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import {
     Box, Button, CssBaseline, Divider,
-    FormControlLabel, FormLabel, FormControl, Link,
-    TextField, Typography, Stack, Card as MuiCard, Checkbox
+    FormLabel, FormControl, Link,
+    TextField, Typography, Stack, Card as MuiCard
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import CloseIcon from '@mui/icons-material/Close';
@@ -105,7 +105,7 @@ export default function SignIn() {
             // ✅ 이메일 저장
             localStorage.setItem('email', user.email);
 
-            const res = await fetch("http://localhost:5050/api/users/register", {
+            const res = await fetch("http://localhost:5050/api/users", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ email: user.email, uid: user.uid, password: "" })
@@ -174,7 +174,7 @@ export default function SignIn() {
                             />
                         </FormControl>
 
-                        <FormControlLabel control={<Checkbox />} label="이메일 업데이트를 받고 싶습니다." />
+
                         <Button type="submit" fullWidth variant="contained">로그인</Button>
 
                         <Link component="button" onClick={handleClickOpen} sx={{ alignSelf: 'center' }}>
