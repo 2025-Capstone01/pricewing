@@ -1,47 +1,114 @@
-import React, { useState } from 'react';
-import CategoryTabs from './myComponents/categoryTabs'; // 카테고리 필터 탭 컴포넌트
-import ProductCard from './myComponents/productCard'; // 상품 카드 컴포넌트
-import { useNavigate } from 'react-router-dom';
-import { categories, favoriteProducts } from './myComponents/mockData'; // 임시 목데이터 (백엔드 연결 전)
-import Header from "../components/Header"; // 상단 헤더
+import React, { useEffect, useState } from 'react';
+import Header from '../components/Header';
 
 const MyPage = () => {
-    const [selectedCategory, setSelectedCategory] = useState('전체'); // 선택된 카테고리 상태
-    const navigate = useNavigate();
+    const [userId, setUserId] = useState(null);
+    const [categories, setCategories] = useState([]);
+    const [favoriteProducts, setFavoriteProducts] = useState([]);
+    const [selectedCategory, setSelectedCategory] = useState('전체');
+    const [loginError, setLoginError] = useState(false);
+    const [loading, setLoading] = useState(true);
 
-    // 상품 카드 클릭 시 → 홈으로 이동 + 상품 URL 전달
-    const handleClickProduct = (product) => {
-        navigate('/', { state: { keyword: product.product_url } });
-    };
+    const email = localStorage.getItem('email');
 
-    // 현재 선택된 카테고리에 따라 상품 필터링
-    const filteredProducts = selectedCategory === '전체'
+    // ✅ Step 1: 이메일로 user_id 받아오기
+    useEffect(() => {
+        if (!email) {
+            setLoginError(true);
+            return;
+        }
+
+        fetch(`/api/users/id?email=${email}`)
+            .then(async (res) => {
+                const text = await res.text();
+                console.log('🧾 Raw response:', text);
+                try {
+                    const json = JSON.parse(text);
+                    if (json.user_id) {
+                        setUserId(json.user_id);
+                        setLoginError(false);
+                    } else {
+                        setLoginError(true);
+                    }
+                } catch (err) {
+                    console.error("❌ JSON 파싱 오류:", err);
+                    setLoginError(true);
+                }
+            })
+            .catch(err => {
+                console.error("❌ 유저 ID 불러오기 실패:", err);
+                setLoginError(true);
+            });
+    }, [email]);
+
+    // ✅ Step 2: user_id로 관심상품 + 카테고리 불러오기
+    useEffect(() => {
+        if (!userId) return;
+
+        setLoading(true);
+
+        Promise.all([
+            fetch('/api/categories').then(res => res.json()),
+            fetch(`/api/likes?user_id=${userId}`).then(res => res.json())
+        ])
+            .then(([cats, likes]) => {
+                setCategories(cats);
+                setFavoriteProducts(likes);
+                console.log("✅ 관심상품:", likes);
+            })
+            .catch(err => console.error("❌ 데이터 불러오기 실패:", err))
+            .finally(() => setLoading(false));
+    }, [userId]);
+
+    const filtered = selectedCategory === '전체'
         ? favoriteProducts
-        : favoriteProducts.filter((p) => p.category_name === selectedCategory);
+        : favoriteProducts.filter(p => p.category_name === selectedCategory);
+
+    // ✅ 미 로그인 상황
+    if (loginError) {
+        return (
+            <div>
+                <Header />
+                <h2>⚠️ 로그인 정보가 없습니다.</h2>
+                <p>로그인 후 다시 시도해주세요. 👉 <a href="/login">로그인 하기</a></p>
+            </div>
+        );
+    }
 
     return (
-        <div style={{ padding: '1rem' }}>
-            <Header/> {/* 상단 헤더 */}
+        <div>
+            <Header />
             <h2>관심 상품</h2>
 
-            {/* 카테고리 선택 탭 */}
-            <CategoryTabs
-                categories={categories}
-                selected={selectedCategory}
-                onSelect={setSelectedCategory}
-            />
+            {/* 카테고리 버튼 */}
+            {loading ? (
+                <p>⏳ 불러오는 중...</p>
+            ) : (
+                <div style={{ marginBottom: '1rem' }}>
+                    <button onClick={() => setSelectedCategory('전체')}>전체</button>
+                    {categories.map(cat => (
+                        <button
+                            key={cat.category_id}
+                            onClick={() => setSelectedCategory(cat.category_name)}
+                        >
+                            {cat.category_name}
+                        </button>
+                    ))}
+                </div>
+            )}
 
-            {/* 필터링된 상품 목록 */}
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', marginTop: '1rem' }}>
-                {filteredProducts.map((product) => (
-                    <ProductCard
-                        key={product.product_id}
-                        product={product}
-                        onClick={() => handleClickProduct(product)} // 클릭 시 홈페이지로 이동
-
-                    />
-                ))}
-            </div>
+            {/* 관심 상품 출력 */}
+            {!loading && filtered.length > 0 ? (
+                <ul>
+                    {filtered.map(product => (
+                        <li key={product.product_id}>
+                            {product.product_title} ({product.category_name})
+                        </li>
+                    ))}
+                </ul>
+            ) : !loading && (
+                <p>💡 현재 관심 상품이 없습니다.</p>
+            )}
         </div>
     );
 };

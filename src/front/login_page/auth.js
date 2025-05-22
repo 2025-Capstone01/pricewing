@@ -14,6 +14,7 @@ export const registerWithEmail = async (email, password) => {
     const user = res.user;
 
     localStorage.setItem('user', JSON.stringify(user));
+    localStorage.setItem('email', user.email);
 
     // 백엔드 API 호출하여 사용자 정보 MySQL에 저장
     const apiRes = await fetch('http://localhost:5050/api/users', {
@@ -37,8 +38,8 @@ export const loginWithEmail = async (email, password) => {
     const res = await signInWithEmailAndPassword(auth, email, password);
     const user = res.user;
     localStorage.setItem('user', JSON.stringify(user));
+    localStorage.setItem('email', user.email);
 
-    localStorage.setItem('user', JSON.stringify(user));
 
     // 로그인 후 user_id 조회
     const idRes = await fetch(`http://localhost:5050/api/users/id?email=${email}`);
@@ -56,6 +57,7 @@ export const loginWithGoogle = async () => {
     const res = await signInWithPopup(auth, provider);
     const user = res.user;
     localStorage.setItem('user', JSON.stringify(user));
+    localStorage.setItem('email', user.email);
 
     // 구글 로그인은 비밀번호를 제공하지 않지만, 이메일은 저장
     const apiRes = await fetch('http://localhost:5050/api/users', {

@@ -99,5 +99,39 @@ router.get('/check', async (req, res) => {
 });
 
 // GET /api/likes 만들어야해!!
+// 마이페이지용 좋아요 상품 조회 API
+router.get('/', async (req, res) => {
+    const { user_id } = req.query;
+    if (!user_id) {
+        return res.status(400).json({ message: 'user_id가 없습니다' });
+    }
+
+    try {
+        const [rows] = await pool.query(
+            `SELECT 
+          l.product_id,
+          p.product_title,
+          p.image_url,
+          p.product_url,
+          c.category_name,
+          (
+            SELECT ph.price
+            FROM price_history ph
+            WHERE ph.product_id = l.product_id
+            ORDER BY ph.checked_at DESC
+            LIMIT 1
+          ) AS current_price
+        FROM likes l
+        JOIN products p ON l.product_id = p.product_id
+        JOIN categories c ON l.category_id = c.category_id
+        WHERE l.user_id = ?`,
+            [user_id]
+        );
+        res.json(rows);
+    } catch (err) {
+        console.error('좋아요 조회 실패:', err);
+        res.status(500).json({ message: '서버 오류' });
+    }
+});
 
 module.exports = router;

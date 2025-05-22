@@ -12,9 +12,6 @@ import IconButton from '@mui/material/IconButton';
 import { GoogleIcon } from './CustomIcons';
 import ForgotPassword from './ForgotPassword';
 import { loginWithEmail, loginWithGoogle } from './auth';
-// import { onAuthStateChanged } from 'firebase/auth';
-// import { auth } from '../../firebase';
-
 
 const Card = styled(MuiCard)(({ theme }) => ({
     position: 'relative',
@@ -41,17 +38,6 @@ export default function SignIn() {
     const [passwordErrorMessage, setPasswordErrorMessage] = React.useState('');
     const [open, setOpen] = React.useState(false);
     const navigate = useNavigate();
-
-    // React.useEffect(() => {
-    //     const unsubscribe = onAuthStateChanged(auth, (user) => {
-    //         if (user) {
-    //             localStorage.setItem('user', JSON.stringify(user));
-    //             navigate('/');
-    //         }
-    //     });
-    //
-    //     return () => unsubscribe();
-    // }, [navigate]);
 
     const handleClickOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
@@ -91,10 +77,11 @@ export default function SignIn() {
         const password = data.get('password');
 
         try {
-            // Firebase 로그인
             await loginWithEmail(email, password);
 
-            // MySQL에서 user_id 조회
+            // ✅ 이메일 저장
+            localStorage.setItem('email', email);
+
             const res = await fetch(`http://localhost:5050/api/users/id?email=${email}`);
             const result = await res.json();
 
@@ -103,7 +90,6 @@ export default function SignIn() {
                 return;
             }
 
-            // user_id를 localStorage에 저장
             localStorage.setItem('user_id', result.user_id);
             alert('로그인 성공!');
             navigate('/');
@@ -114,23 +100,22 @@ export default function SignIn() {
 
     const handleGoogleLogin = async () => {
         try {
-            // Firebase 로그인 (구글 팝업)
             const user = await loginWithGoogle();
 
-            // MySQL에 사용자 정보 저장 (이미 있으면 무시됨)
-            const res = await fetch("http://localhost:5050/api/users", {
+            // ✅ 이메일 저장
+            localStorage.setItem('email', user.email);
+
+            const res = await fetch("http://localhost:5050/api/users/register", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ email: user.email, password: "" }) // 구글은 비밀번호 없음
+                body: JSON.stringify({ email: user.email, uid: user.uid, password: "" })
             });
 
             const result = await res.json();
 
-            // user_id 저장
             if (result.user_id) {
                 localStorage.setItem("user_id", result.user_id);
             } else {
-                // 이미 등록된 사용자라면 user_id만 별도로 조회
                 const idRes = await fetch(`http://localhost:5050/api/users/id?email=${user.email}`);
                 const idResult = await idRes.json();
 
@@ -141,6 +126,7 @@ export default function SignIn() {
                     return;
                 }
             }
+
             alert('구글 로그인 성공!');
             navigate('/');
         } catch (err) {

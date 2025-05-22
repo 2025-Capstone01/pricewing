@@ -9,6 +9,7 @@ const axios = require('axios');
 // 라우터 불러오기
 const searchRouter = require("./routes/search");
 const likesRouter = require('./routes/likes');
+const categoryRouter = require('./routes/categories');
 const alertRouter = require('./routes/alert');
 const userRouter = require('./routes/user');
 
@@ -19,6 +20,7 @@ app.use(express.json());        // JSON 요청 파싱
 // 검색 API 라우터 연결 (/api/search → search.js 처리)
 app.use("/api/search", searchRouter);
 app.use('/api/likes', likesRouter);
+app.use('/api/categories', categoryRouter);
 app.use('/api/alerts', alertRouter);
 app.use('/api/users', userRouter);
 
