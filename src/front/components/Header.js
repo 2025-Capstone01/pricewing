@@ -77,14 +77,14 @@ const Header = () => {
                         src="/pricewing_logo.png"
                         alt="로고"
                         className="logo"
-                        onClick={goHome}
+                        onClick={() => goHome()} // ✅ 이벤트 객체 제거
                         style={{ cursor: 'pointer' }}
                     />
                 </div>
 
                 {/* 가운데: 버튼들 */}
                 <div className="header-center buttons">
-                    <button onClick={goHome}>홈으로</button>
+                    <button onClick={() => goHome()}>홈으로</button>
 
                     {!loggedIn ? (
                         <>

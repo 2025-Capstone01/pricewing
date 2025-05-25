@@ -8,6 +8,7 @@ import HomeDescription from './homeComponents/HomeDescription';
 const Home_page = () => {
     const location = useLocation();
     const [productData, setProductData] = useState(null);
+    const [likeUrl, setLikeUrl] = useState('');
 
     // 검색 URL이 변경되면 결과 초기화
     useEffect(() => {

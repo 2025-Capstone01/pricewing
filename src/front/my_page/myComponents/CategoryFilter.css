@@ -1,0 +1,28 @@
+.category-filter {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    padding: 0.5rem 0;
+}
+
+.category-button {
+    padding: 0.4rem 0.9rem;
+    border: 1px solid #ccc;
+    background-color: #f9f9f9;
+    color: #333;
+    border-radius: 20px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.category-button:hover {
+    background-color: #eee;
+}
+
+.category-button.selected {
+    background-color: #333;
+    color: #fff;
+    border-color: #333;
+}
