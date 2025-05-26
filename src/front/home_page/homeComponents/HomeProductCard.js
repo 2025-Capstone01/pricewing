@@ -3,6 +3,7 @@ import LikeButton from './LikeButton';
 import DiscountRate from './DiscountRate';
 import PriceChart from './PriceChart';
 import GraphDescription from './GraphDescription';
+import PriceAnalysisAI from "./PriceAnalysisAI";
 
 
 const HomeProductCard = ({ data }) => {
@@ -25,6 +26,12 @@ const HomeProductCard = ({ data }) => {
 
             {/* 할인율 표시 */}
             <DiscountRate originalPrice={original} currentPrice={current} />
+
+            {/* AI Summary Component */}
+            <PriceAnalysisAI
+                priceHistory={data.price_history}
+                productTitle={data.product_title}
+                originalPrice = {data.original_price}/>
 
             {/* 가격 그래프 */}
             <h3>가격 변동 그래프</h3>
