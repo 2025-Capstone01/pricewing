@@ -26,22 +26,28 @@ router.post('/', async (req, res) => {
         let liked_price = clientLikedPrice;
 
         if (!liked_price) {
-            // front에서 안 준 경우 DB에서 최신 가격 가져오기
             const [priceRows] = await pool.query(
-                `SELECT price
-                 FROM price_history
-                 WHERE product_id = ?
-                 ORDER BY checked_at DESC
-                 LIMIT 1`,
+                `SELECT price FROM price_history WHERE product_id = ? ORDER BY checked_at DESC LIMIT 1`,
                 [product_id]
             );
 
-            if (priceRows.length === 0) {
-                return res.status(404).json({message: '해당 상품의 가격 기록이 없습니다.'});
-            }
+            if (priceRows.length > 0) {
+                liked_price = priceRows[0].price;
+            } else {
+                // 가격 이력이 없을 경우: 정가(original_price)를 기본값으로 설정
+                const [productRows] = await pool.query(
+                    `SELECT original_price FROM products WHERE product_id = ?`,
+                    [product_id]
+                );
 
-            liked_price = priceRows[0].price;
+                if (productRows.length === 0) {
+                    return res.status(404).json({ message: '상품 정보를 찾을 수 없습니다.' });
+                }
+
+                liked_price = productRows[0].original_price;
+            }
         }
+
 // 좋아요 등록
         await pool.query(
             `INSERT INTO likes (user_id, product_id, category_id, liked_price, last_notified_at)
@@ -114,14 +120,15 @@ router.get('/', async (req, res) => {
           p.image_url,
           p.product_url,
           c.category_name,
-          (
-            SELECT ph.price
-            FROM price_history ph
-            WHERE ph.product_id = l.product_id
-            ORDER BY ph.checked_at DESC
-            LIMIT 1
-          ) AS current_price
-        FROM likes l
+          COALESCE((
+                       SELECT ph.price
+                       FROM price_history ph
+                       WHERE ph.product_id = l.product_id
+                       ORDER BY ph.checked_at DESC
+                   LIMIT 1
+              ), p.original_price) AS current_price
+
+             FROM likes l
         JOIN products p ON l.product_id = p.product_id
         JOIN categories c ON l.category_id = c.category_id
         WHERE l.user_id = ?`,
