@@ -120,14 +120,15 @@ router.get('/', async (req, res) => {
           p.image_url,
           p.product_url,
           c.category_name,
-          (
-            SELECT ph.price
-            FROM price_history ph
-            WHERE ph.product_id = l.product_id
-            ORDER BY ph.checked_at DESC
-            LIMIT 1
-          ) AS current_price
-        FROM likes l
+          COALESCE((
+                       SELECT ph.price
+                       FROM price_history ph
+                       WHERE ph.product_id = l.product_id
+                       ORDER BY ph.checked_at DESC
+                   LIMIT 1
+              ), p.original_price) AS current_price
+
+             FROM likes l
         JOIN products p ON l.product_id = p.product_id
         JOIN categories c ON l.category_id = c.category_id
         WHERE l.user_id = ?`,
