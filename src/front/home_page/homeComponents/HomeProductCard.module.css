@@ -1,0 +1,73 @@
+.card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #fff;
+    padding: 24px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    margin: 32px auto;
+    max-width: 800px;
+    width: 100%;
+    gap: 16px;
+}
+
+.top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 24px;
+}
+
+.image {
+    width: 200px;
+    height: auto;
+    border-radius: 8px;
+}
+
+.productInfo {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: flex-start;
+}
+
+.titleRow {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.title {
+    font-size: 18px;
+    font-weight: 400;
+    margin: 0;
+}
+
+.priceBlock {
+    display: flex;
+    flex-direction: column;
+    gap: 0px;
+    align-items: flex-start;
+}
+
+.price {
+    font-size: 25px;
+    font-weight: bold;
+    color: #000000;
+    margin-bottom: 0;
+}
+
+.original {
+    font-size: 15px;
+    color: #999;
+    text-decoration: line-through;
+}
+
+.graphTitle {
+    font-size: 20px;
+    font-weight: bold;
+    color: #555;
+    margin-top: 20px;
+    margin-bottom: 0;
+}
