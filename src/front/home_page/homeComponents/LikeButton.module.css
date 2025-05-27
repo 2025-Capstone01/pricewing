@@ -1,7 +1,7 @@
 .heart {
-    all: unset;
+    /* all: unset; */
     cursor: pointer;
-    font-size: 22px;
+    font-size: 23px;
     line-height: 1;
     padding: 0;
     margin: 0;
