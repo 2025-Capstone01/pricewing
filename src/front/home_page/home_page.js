@@ -19,7 +19,7 @@ const Home_page = () => {
     const handleSearch = async (link) => {
         console.log("검색 시작:", link);
         try {
-            const res = await fetch("http://localhost:5050/api/search", {
+            const res = await fetch("http://0.0.0.0:5050/api/search", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ link })

@@ -10,7 +10,7 @@ const LikeButton = ({ userId, productId, currentPrice}) => {
             if (!userId || !productId) return;
             try {
                 const res = await fetch(
-                    `http://localhost:5050/api/likes/check?user_id=${userId}&product_id=${productId}`
+                    `http://0.0.0.0:5050/api/likes/check?user_id=${userId}&product_id=${productId}`
                 );
                 const result = await res.json();
                 console.log("초기 좋아요 상태:", result);
@@ -29,7 +29,7 @@ const LikeButton = ({ userId, productId, currentPrice}) => {
             return;
         }
 
-        const url = "http://localhost:5050/api/likes";
+        const url = "http://0.0.0.0:5050/api/likes";
         const method = liked ? "DELETE" : "POST";
 
         const bodyData = {

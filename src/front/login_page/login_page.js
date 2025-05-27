@@ -82,7 +82,7 @@ export default function SignIn() {
             // ✅ 이메일 저장
             localStorage.setItem('email', email);
 
-            const res = await fetch(`http://localhost:5050/api/users/id?email=${email}`);
+            const res = await fetch(`http://0.0.0.0:5050/api/users/id?email=${email}`);
             const result = await res.json();
 
             if (!result.user_id) {
@@ -105,7 +105,7 @@ export default function SignIn() {
             // ✅ 이메일 저장
             localStorage.setItem('email', user.email);
 
-            const res = await fetch("http://localhost:5050/api/users", {
+            const res = await fetch("http://0.0.0.0:5050/api/users", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ email: user.email, uid: user.uid, password: "" })
@@ -116,7 +116,7 @@ export default function SignIn() {
             if (result.user_id) {
                 localStorage.setItem("user_id", result.user_id);
             } else {
-                const idRes = await fetch(`http://localhost:5050/api/users/id?email=${user.email}`);
+                const idRes = await fetch(`http://0.0.0.0:5050/api/users/id?email=${user.email}`);
                 const idResult = await idRes.json();
 
                 if (idResult.user_id) {

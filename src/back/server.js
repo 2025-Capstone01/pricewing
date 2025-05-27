@@ -28,7 +28,7 @@ app.use('/api/users', userRouter);
 // 매 1분마다 알림 체크
 cron.schedule('*/1 * * * *', async () => {
     try {
-        const res = await axios.get('http://localhost:5050/api/alerts/check');
+        const res = await axios.get('http://0.0.0.0:5050/api/alerts/check');
         console.log('✅ 자동 알림 체크 실행됨:', res.data);
     } catch (err) {
         console.error('❌ 알림 체크 실패:', err.message);
@@ -36,6 +36,6 @@ cron.schedule('*/1 * * * *', async () => {
 });
 
 // 서버 실행
-app.listen(5050, () => {
-    console.log("백엔드 서버 실행 중 http://localhost:5050");
+app.listen(5050, '0.0.0.0',() => {
+    console.log("백엔드 서버 실행 중 http://0.0.0.0:5050");
 });
