@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { sendToAI } from '../../api/aiService';
 
 const PriceAnalysisAI = ({ priceHistory, productTitle, originalPrice}) => {
   const [summary, setSummary] = useState("");
@@ -10,16 +11,25 @@ const PriceAnalysisAI = ({ priceHistory, productTitle, originalPrice}) => {
     const fetchSummary = async () => {
       setLoading(true);
       try {
-        const res = await fetch("http://54.86.83.95:5000/api/message", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
+        const inputData = {
             price_history: priceHistory,
             product_title: productTitle,
             original_price: originalPrice,
-            }),
-        });
-        const data = await res.json();
+        };
+
+        //Calling SendToAI API to get access to AI server on EC2
+        const data = await sendToAI(inputData);
+
+        //const res = await fetch("http://54.166.111.157:5000/api/message", {
+          //method: "POST",
+          //headers: { "Content-Type": "application/json" },
+          //body: JSON.stringify({
+            //price_history: priceHistory,
+            //product_title: productTitle,
+            //original_price: originalPrice,
+            //}),
+        //});
+        //const data = await res.json();
         setSummary(data.summary);
       } catch (error) {
         setSummary("요약을 불러오는데 실패했습니다.");

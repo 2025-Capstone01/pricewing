@@ -12,6 +12,7 @@ const LikeButton = ({ userId, productId, currentPrice}) => {
                     `http://localhost:5050/api/likes/check?user_id=${userId}&product_id=${productId}`
                 );
                 const result = await res.json();
+                console.log("초기 좋아요 상태:", result);
                 setLiked(result.liked);
             } catch (err) {
                 console.error("좋아요 상태 확인 실패:", err);
@@ -39,6 +40,8 @@ const LikeButton = ({ userId, productId, currentPrice}) => {
             bodyData.liked_price = currentPrice; // POST일 때만 가격 추가
         }
 
+        console.log("좋아요 요청:", { method, bodyData });
+
         try {
             const res = await fetch(url, {
                 method,
@@ -47,8 +50,12 @@ const LikeButton = ({ userId, productId, currentPrice}) => {
             });
 
             if (res.ok) {
+                const responseData = await res.json();
+                console.log("좋아요 처리 성공:", responseData);
                 setLiked(!liked); // 요청 성공 시 liked 상태를 반전시켜 버튼 텍스트를 변경
             } else {
+                const errorData = await res.json();
+                console.error("좋아요 처리 실패 - 서버 응답:", errorData);
                 alert("좋아요 처리 중 오류가 발생했습니다.");
             }
         } catch (error) {
