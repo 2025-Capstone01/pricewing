@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import styles from './SearchBox.module.css';
 
 const SearchBox = ({ onSearch, likeUrl }) => {
     const [link, setLink] = useState('');
@@ -23,15 +24,18 @@ const SearchBox = ({ onSearch, likeUrl }) => {
     };
 
     return (
-        <form onSubmit={handleSubmit}>
+        <div className={styles.container}>
+        <form onSubmit={handleSubmit} className={styles.form}>
             <input
                 type="text"
+                className={styles.input}
                 placeholder="무신사 상품 링크를 입력하세요"
                 value={link}
                 onChange={(e) => setLink(e.target.value)}
             />
-            <button type="submit">검색</button>
+            <button type="submit" className={styles.button}>검색</button>
         </form>
+        </div>
     );
 };
 

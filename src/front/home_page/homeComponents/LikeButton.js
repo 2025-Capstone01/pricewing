@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import styles from './LikeButton.module.css';
 
 const LikeButton = ({ userId, productId, currentPrice}) => {
     const [liked, setLiked] = useState(false);
@@ -58,8 +59,8 @@ const LikeButton = ({ userId, productId, currentPrice}) => {
 
     // 렌더링된 버튼
     return (
-        <button onClick={handleLike}>
-            {liked ? '좋아요 취소' : '좋아요'}
+        <button className={styles.heart} onClick={handleLike}>
+            {liked ? "❤️" : "🤍"}
         </button>
     );
 };

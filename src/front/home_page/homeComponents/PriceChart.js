@@ -2,6 +2,7 @@ import React from 'react';
 import {
     LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine
 } from 'recharts';
+import styles from './PriceChart.module.css';
 
 const PriceChart = ({ data, originalPrice }) => {
     if (!originalPrice) return <p>가격 정보가 없습니다.</p>;
@@ -20,7 +21,7 @@ const PriceChart = ({ data, originalPrice }) => {
     ];
 
     return (
-        <div style={{ width: "100%", height: 300, marginTop: 16 }}>
+        <div className={styles.chartContainer}>
             <ResponsiveContainer>
                 <LineChart data={chartData}>
                     <CartesianGrid strokeDasharray="3 3" />
