@@ -33,8 +33,7 @@ const HomeProductCard = ({ data }) => {
                 </div>
             </div>
 
-            <h3 className={styles.graphTitle}>가격 변동 그래프</h3>
-            <PriceChart data={data.price_history} originalPrice={original} />
+
             {/* AI Summary Component */}
             <PriceAnalysisAI
                 priceHistory={data.price_history}
