@@ -5,6 +5,7 @@ import { isLoggedIn } from '../login_page/session';
 import { logout } from '../login_page/auth';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
+const BASE_URL = process.env.REACT_APP_BASE_URL;
 
 const Header = () => {
     const email = localStorage.getItem('email');
@@ -33,7 +34,7 @@ const Header = () => {
         if (!userId) return;
 
         try {
-            const res = await fetch(`http://0.0.0.0:5050/api/alerts/history?user_id=${userId}`);
+            const res = await fetch(`${BASE_URL}/api/alerts/history?user_id=${userId}`);
             const data = await res.json();
             console.log("📜 알림 기록:", data);
 
@@ -48,7 +49,7 @@ const Header = () => {
     // ✅ 알림 삭제 함수 추가
     const handleDelete = async (id) => {
         try {
-            const res = await fetch(`http://0.0.0.0:5050/api/alerts/history/${id}`, {
+            const res = await fetch(`${BASE_URL}/api/alerts/history/${id}`, {
                 method: 'DELETE',
             });
             const result = await res.json();

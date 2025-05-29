@@ -7,6 +7,7 @@ import {
     signOut
 } from 'firebase/auth';
 import { auth, provider } from './firebase';
+const BASE_URL = process.env.REACT_APP_BASE_URL;
 
 // 회원가입 (이메일로)
 export const registerWithEmail = async (email, password) => {
@@ -17,7 +18,7 @@ export const registerWithEmail = async (email, password) => {
     localStorage.setItem('email', user.email);
 
     // 백엔드 API 호출하여 사용자 정보 MySQL에 저장
-    const apiRes = await fetch('http://0.0.0.0:5050/api/users', {
+    const apiRes = await fetch(`${BASE_URL}/api/users`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: user.email, password }), // 테스트용, 실제 프로젝트에서는 반드시 암호화!
@@ -42,7 +43,7 @@ export const loginWithEmail = async (email, password) => {
 
 
     // 로그인 후 user_id 조회
-    const idRes = await fetch(`http://0.0.0.0:5050/api/users/id?email=${email}`);
+    const idRes = await fetch(`${BASE_URL}/api/users/id?email=${email}`);
     const idResult = await idRes.json();
 
     if (idResult.user_id) {
@@ -60,7 +61,7 @@ export const loginWithGoogle = async () => {
     localStorage.setItem('email', user.email);
 
     // 구글 로그인은 비밀번호를 제공하지 않지만, 이메일은 저장
-    const apiRes = await fetch('http://0.0.0.0:5050/api/users', {
+    const apiRes = await fetch(`${BASE_URL}/api/users`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: user.email, password: '' }), // 비밀번호는 비워둠
@@ -73,7 +74,7 @@ export const loginWithGoogle = async () => {
         localStorage.setItem('user_id', result.user_id);
     } else {
         // 이미 등록된 사용자일 수 있으므로, 다시 조회
-        const idRes = await fetch(`http://0.0.0.0:5050/api/users/id?email=${user.email}`);
+        const idRes = await fetch(`${BASE_URL}/api/users/id?email=${user.email}`);
         const idResult = await idRes.json();
         if (idResult.user_id) {
             localStorage.setItem('user_id', idResult.user_id);

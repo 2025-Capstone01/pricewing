@@ -12,6 +12,7 @@ import IconButton from '@mui/material/IconButton';
 import { GoogleIcon } from './CustomIcons';
 import { registerWithEmail, loginWithGoogle } from './auth';
 
+
 const Card = styled(MuiCard)(({ theme }) => ({
     position: 'relative',
     display: 'flex',

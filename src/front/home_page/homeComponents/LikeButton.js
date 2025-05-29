@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import styles from './LikeButton.module.css';
+const BASE_URL = process.env.REACT_APP_BASE_URL;
 
 const LikeButton = ({ userId, productId, currentPrice}) => {
     const [liked, setLiked] = useState(false);
@@ -10,7 +11,7 @@ const LikeButton = ({ userId, productId, currentPrice}) => {
             if (!userId || !productId) return;
             try {
                 const res = await fetch(
-                    `http://0.0.0.0:5050/api/likes/check?user_id=${userId}&product_id=${productId}`
+                    `${BASE_URL}/api/likes/check?user_id=${userId}&product_id=${productId}`
                 );
                 const result = await res.json();
                 console.log("초기 좋아요 상태:", result);
@@ -29,7 +30,7 @@ const LikeButton = ({ userId, productId, currentPrice}) => {
             return;
         }
 
-        const url = "http://0.0.0.0:5050/api/likes";
+        const url = `${BASE_URL}/api/likes`;
         const method = liked ? "DELETE" : "POST";
 
         const bodyData = {

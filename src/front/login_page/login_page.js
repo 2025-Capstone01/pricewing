@@ -12,6 +12,7 @@ import IconButton from '@mui/material/IconButton';
 import { GoogleIcon } from './CustomIcons';
 import ForgotPassword from './ForgotPassword';
 import { loginWithEmail, loginWithGoogle } from './auth';
+const BASE_URL = process.env.REACT_APP_BASE_URL;
 
 const Card = styled(MuiCard)(({ theme }) => ({
     position: 'relative',
@@ -82,7 +83,7 @@ export default function SignIn() {
             // ✅ 이메일 저장
             localStorage.setItem('email', email);
 
-            const res = await fetch(`http://0.0.0.0:5050/api/users/id?email=${email}`);
+            const res = await fetch(`${BASE_URL}/api/users/id?email=${email}`);
             const result = await res.json();
 
             if (!result.user_id) {
@@ -105,7 +106,7 @@ export default function SignIn() {
             // ✅ 이메일 저장
             localStorage.setItem('email', user.email);
 
-            const res = await fetch("http://0.0.0.0:5050/api/users", {
+            const res = await fetch(`${BASE_URL}/api/users`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ email: user.email, uid: user.uid, password: "" })
@@ -116,7 +117,7 @@ export default function SignIn() {
             if (result.user_id) {
                 localStorage.setItem("user_id", result.user_id);
             } else {
-                const idRes = await fetch(`http://0.0.0.0:5050/api/users/id?email=${user.email}`);
+                const idRes = await fetch(`${BASE_URL}/api/users/id?email=${user.email}`);
                 const idResult = await idRes.json();
 
                 if (idResult.user_id) {
