@@ -37,14 +37,13 @@ const Home_page = () => {
         <>
             <Header/>
             <div className="home-container">
-                <div className="background">
+                <div className={`background ${productData ? 'no-background' : ''}`}>
 
                     {/* 마이페이지에서 전달된 URL(keyword)을 검색창으로 전달*/}
                     <SearchBox onSearch={handleSearch} likeUrl={location.state?.keyword} key={location.key}/>
 
                     {/* 홈페이지 설명글 */}
                     <HomeDescription />
-
 
                     {/* 검색 결과가 있을 때만 상품 카드 렌더링 */}
                     {productData && (
