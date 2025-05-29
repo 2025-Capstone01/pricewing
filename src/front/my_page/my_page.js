@@ -25,7 +25,10 @@ const MyPage = () => {
         goHome(productUrl); // 상태로 전달
     };
 
+    console.log("Login Error:", loginError);  // Log loginError state
+
     if (loginError) {
+        console.error("Login Error:", loginError);  // Log the login error
         return (
             <div>
                 <Header />
