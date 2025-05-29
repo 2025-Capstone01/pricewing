@@ -1,11 +1,14 @@
+/* 카테고리 필터 전체 영역 */
 .category-filter {
     display: flex;
     flex-wrap: wrap;
     gap: 0.5rem;
-    margin-bottom: 1rem;
+    margin-bottom: 1.5rem;
     padding: 0.5rem 0;
+    justify-content: center;
 }
 
+/* 기본 카테고리 버튼 스타일 */
 .category-button {
     padding: 0.4rem 0.9rem;
     border: 1px solid #ccc;
@@ -15,12 +18,16 @@
     font-size: 14px;
     cursor: pointer;
     transition: all 0.2s ease;
+    font-weight: 500;
 }
 
+/* 마우스 오버 시 */
 .category-button:hover {
-    background-color: #eee;
+    background-color: #eaeaea;
+    border-color: #aaa;
 }
 
+/* 선택된 버튼 */
 .category-button.selected {
     background-color: #333;
     color: #fff;

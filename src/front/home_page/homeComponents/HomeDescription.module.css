@@ -1,7 +1,13 @@
 .description {
-    font-size: 25px;
-    font-weight: 700;
-    color: #333;
+    font-size: 24px;
+    font-weight: 600;
+    color: #ffffff;
     text-align: center;
     margin: 28px 0 16px;
+    line-height: 1.6;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8); /* ✅ 그림자 추가 */
+    background-color: rgba(0, 0, 0, 0.5);        /* ✅ 반투명 배경 */
+    display: inline-block;
+    padding: 1rem 2rem;
+    border-radius: 12px;
 }
